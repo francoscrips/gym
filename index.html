@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#101113">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="description" content="A dark, modern workout and nutrition tracker.">
+<title>FORM 2.0 — Fitness & Nutrition</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#101113;--panel:#181a1e;--panel2:#202228;--line:#2b2e35;--text:#f4f5f7;--muted:#9296a1;--lime:#c5f36a;--blue:#8ba7ff;--orange:#ffb36b;--red:#ff7474;--radius:20px}
+*{box-sizing:border-box}html{background:var(--bg);scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,-apple-system,BlinkMacSystemFont,"SF Pro Display",sans-serif;font-size:14px;line-height:1.45;padding-bottom:95px}button,input,select,textarea{font:inherit}button{cursor:pointer;border:0}button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--lime);outline-offset:2px}.app{max-width:1120px;margin:auto;padding:26px 24px 40px}.topbar{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:30px}.brand{font-size:21px;font-weight:800;letter-spacing:.18em}.brand span{color:var(--lime)}.eyebrow{font-size:11px;text-transform:uppercase;letter-spacing:.15em;color:var(--muted);font-weight:700}.top-right{display:flex;align-items:center;gap:10px}.date-pill,.icon-btn{border:1px solid var(--line);background:var(--panel);color:var(--text);border-radius:12px;padding:10px 13px}.icon-btn{width:42px;height:42px;font-size:17px}.hello{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;margin-bottom:23px}.hello h1{font-size:clamp(25px,4vw,36px);letter-spacing:-.05em;margin:5px 0 0}.hello p{color:var(--muted);margin:7px 0 0}.btn{border-radius:12px;padding:12px 16px;font-weight:700;background:var(--lime);color:#171a11;transition:transform .18s,opacity .18s}.btn:hover{transform:translateY(-1px)}.btn.secondary{background:var(--panel2);color:var(--text);border:1px solid var(--line)}.btn.ghost{background:transparent;color:var(--muted);border:1px solid var(--line)}.btn.danger{background:#392124;color:#ffb2b2}.grid{display:grid;grid-template-columns:1.15fr .85fr;gap:16px}.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:21px;min-width:0}.card-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:18px}.card-head h2,.card h2{font-size:16px;margin:0;letter-spacing:-.025em}.subtle{color:var(--muted)}.small{font-size:12px}.nutrition-main{display:flex;align-items:center;gap:26px}.ring-wrap{position:relative;width:190px;height:190px;flex:0 0 190px}.ring-wrap svg{width:100%;height:100%;transform:rotate(-90deg)}.ring-track{stroke:#2b2e35;stroke-width:11;fill:none}.ring-progress{stroke:var(--lime);stroke-width:11;stroke-linecap:round;fill:none;transition:stroke-dashoffset .6s ease}.ring-center{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;text-align:center}.ring-center strong{font-size:32px;letter-spacing:-.06em}.ring-center span{font-size:11px;color:var(--muted)}.ring-center small{color:var(--lime);font-size:11px;margin-top:5px}.macro-list{flex:1;display:grid;gap:18px;min-width:0}.macro-top{display:flex;justify-content:space-between;gap:10px;margin-bottom:8px}.macro-top strong{font-size:13px}.macro-top span{font-size:12px;color:var(--muted)}.bar{height:7px;border-radius:99px;background:#30333a;overflow:hidden}.bar>span{display:block;height:100%;width:0;border-radius:99px;transition:width .4s}.bar.protein>span{background:var(--lime)}.bar.carbs>span{background:var(--blue)}.bar.fats>span{background:var(--orange)}.quick-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:22px}.stat{padding:13px;border:1px solid var(--line);border-radius:14px;background:#15171a}.stat span{display:block;color:var(--muted);font-size:11px}.stat strong{display:block;font-size:17px;margin-top:4px}.chatbox{display:flex;gap:9px;margin-top:14px}.chatbox input{min-width:0;flex:1;background:#111215;border:1px solid var(--line);color:var(--text);border-radius:12px;padding:13px 14px}.chatbox input::placeholder{color:#6f737d}.section{margin-top:18px}.meal-group{margin-top:17px}.meal-title{display:flex;justify-content:space-between;align-items:center;color:var(--muted);font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px}.food-row{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid #292c32}.food-row:last-child{border-bottom:0}.food-icon{width:38px;height:38px;border-radius:12px;background:var(--panel2);display:grid;place-items:center;font-size:17px;flex-shrink:0}.food-info{min-width:0;flex:1}.food-info strong{display:block;font-size:13px}.food-info span{font-size:11px;color:var(--muted)}.food-kcal{text-align:right;font-weight:700;white-space:nowrap}.food-kcal small{display:block;color:var(--muted);font-size:10px;font-weight:500}.row-actions{display:flex;gap:5px}.mini-btn{border:1px solid var(--line);background:transparent;color:var(--muted);border-radius:8px;padding:6px 8px}.two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px}.empty{color:var(--muted);padding:20px 0;text-align:center}.tabs{position:fixed;z-index:20;bottom:0;left:0;right:0;background:rgba(17,18,21,.94);backdrop-filter:blur(18px);border-top:1px solid var(--line);padding:10px max(16px,env(safe-area-inset-right)) calc(10px + env(safe-area-inset-bottom)) max(16px,env(safe-area-inset-left));display:flex;justify-content:center;gap:8px}.tab{min-width:105px;display:flex;align-items:center;justify-content:center;gap:8px;background:transparent;color:var(--muted);border-radius:12px;padding:11px 15px;font-weight:600}.tab.active{background:var(--panel2);color:var(--lime)}.tab .ico{font-size:16px}.view{display:none;animation:fade .25s ease}.view.active{display:block}@keyframes fade{from{opacity:.5;transform:translateY(4px)}to{opacity:1;transform:none}}.workout-hero{background:linear-gradient(120deg,#20251a,#181a1e 65%);border-color:#3a4430}.workout-hero h2{font-size:24px;margin:8px 0}.workout-hero p{color:var(--muted);max-width:460px}.template-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.template{padding:17px;border:1px solid var(--line);background:var(--panel);border-radius:16px;text-align:left;color:var(--text)}.template:hover{border-color:#6f8052}.template .template-icon{font-size:23px}.template strong{display:block;margin:12px 0 5px}.template span{font-size:11px;color:var(--muted)}.exercise-list{display:grid;gap:12px}.exercise-card{border:1px solid var(--line);border-radius:16px;padding:15px;background:#15171a}.exercise-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}.exercise-head strong{display:block}.exercise-head small{color:var(--muted)}.set-table{width:100%;border-collapse:collapse}.set-table th{text-align:left;color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.07em;font-weight:600;padding:8px 5px}.set-table td{padding:6px 5px;border-top:1px solid #282b31}.set-table input{width:100%;min-width:42px;background:#202228;border:1px solid #343740;border-radius:8px;color:var(--text);padding:9px 7px}.set-table input[type=checkbox]{width:18px;height:18px;accent-color:var(--lime)}.set-no{color:var(--muted);width:28px}.workout-controls{display:flex;align-items:center;gap:9px;flex-wrap:wrap}.timer{font-variant-numeric:tabular-nums;font-weight:800;font-size:19px}.field{display:grid;gap:7px}.field label{color:var(--muted);font-size:12px}.field input,.field select{width:100%;padding:12px;background:#111215;color:var(--text);border:1px solid var(--line);border-radius:11px}.form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}.modal-backdrop{position:fixed;z-index:50;inset:0;background:#0009;display:none;align-items:center;justify-content:center;padding:20px}.modal-backdrop.show{display:flex}.modal{width:min(520px,100%);max-height:90vh;overflow:auto;background:var(--panel);border:1px solid var(--line);border-radius:22px;padding:22px;box-shadow:0 24px 80px #0008}.modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}.modal-head h2{font-size:18px;margin:0}.modal-actions{display:flex;justify-content:flex-end;gap:9px;margin-top:20px}.calendar{display:grid;grid-template-columns:repeat(7,1fr);gap:7px}.day-label{text-align:center;color:var(--muted);font-size:10px;padding:7px 0}.day{min-height:68px;border:1px solid var(--line);background:#15171a;color:var(--text);border-radius:10px;text-align:left;padding:7px;position:relative}.day.muted{opacity:.32}.day.today{border-color:var(--lime)}.day.selected{background:#303a22;border-color:var(--lime)}.day .dot{display:block;width:5px;height:5px;background:var(--lime);border-radius:50%;margin-top:7px}.chart-wrap{height:250px;position:relative}.chart-wrap svg{width:100%;height:100%;overflow:visible}.chart-label{fill:var(--muted);font-size:10px}.legend{display:flex;gap:15px;color:var(--muted);font-size:11px}.legend i{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--lime);margin-right:6px}.history-summary{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:16px}.history-summary .stat{padding:12px}.toast{position:fixed;z-index:80;bottom:90px;left:50%;transform:translate(-50%,15px);background:#e5ffb4;color:#171a11;padding:11px 16px;border-radius:12px;font-weight:700;opacity:0;pointer-events:none;transition:.25s}.toast.show{opacity:1;transform:translate(-50%,0)}.onboarding{position:fixed;z-index:100;inset:0;background:var(--bg);display:none;align-items:center;justify-content:center;padding:20px;overflow:auto}.onboarding.show{display:flex}.onboard-card{width:min(560px,100%);border:1px solid var(--line);border-radius:24px;background:var(--panel);padding:clamp(22px,5vw,36px)}.steps{display:flex;gap:6px;margin:20px 0 28px}.steps span{height:4px;border-radius:8px;flex:1;background:#343740}.steps span.done{background:var(--lime)}.onboard-card h1{font-size:28px;letter-spacing:-.05em;margin:8px 0}.onboard-card p{color:var(--muted);margin-bottom:24px}.onboard-actions{display:flex;justify-content:space-between;gap:10px;margin-top:25px}.choice-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.choice{padding:14px;background:#111215;color:var(--text);border:1px solid var(--line);border-radius:12px;text-align:left}.choice.selected{border-color:var(--lime);background:#252d1c}.choice strong{display:block}.choice small{display:block;color:var(--muted);margin-top:3px}.rest-overlay{position:fixed;z-index:70;inset:0;background:#101113f2;display:none;align-items:center;justify-content:center;padding:20px}.rest-overlay.show{display:flex}.rest-box{text-align:center;width:min(360px,100%);background:var(--panel);border:1px solid var(--line);border-radius:24px;padding:28px}.rest-number{font-size:66px;letter-spacing:-.07em;font-weight:800;margin:20px 0}.notice{font-size:11px;color:var(--muted);line-height:1.6;margin-top:15px}.hidden{display:none!important}
+@media(max-width:760px){.app{padding:20px 14px 32px}.grid,.two-col{grid-template-columns:1fr}.nutrition-main{gap:16px}.ring-wrap{width:155px;height:155px;flex-basis:155px}.ring-center strong{font-size:27px}.template-grid{grid-template-columns:1fr}.template{display:flex;align-items:center;gap:13px}.template strong{margin:0 0 4px}.template .template-icon{width:34px}.tab{min-width:0;flex:1;padding:11px 8px;flex-direction:column;gap:4px;font-size:10px}.tab .ico{font-size:17px}.hello{align-items:flex-start}.hello .btn{padding:10px 11px}.history-summary{grid-template-columns:repeat(2,1fr)}.day{min-height:52px;padding:5px;font-size:11px}.calendar{gap:4px}.topbar{margin-bottom:24px}.date-pill{font-size:11px}.card{padding:17px}}
+@media(max-width:400px){.nutrition-main{flex-direction:column}.ring-wrap{width:175px;height:175px;flex-basis:auto}.macro-list{width:100%}.form-grid{grid-template-columns:1fr}.quick-stats{gap:6px}.stat{padding:10px}.stat strong{font-size:15px}}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="topbar">
+    <div class="brand">F<span>O</span>RM<span>•</span><small style="font-size:9px;letter-spacing:.08em;color:var(--muted);margin-left:6px">2.0</small></div>
+    <div class="top-right"><div class="date-pill" id="todayPill">MON, OCT 13</div><button class="icon-btn" id="settingsBtn" aria-label="Settings">⚙</button></div>
+  </header>
+  <main>
+    <section class="view active" id="dashboardView">
+      <div class="hello"><div><div class="eyebrow">YOUR DAILY OVERVIEW</div><h1 id="greeting">Let’s get after it.</h1><p id="goalLine">Small steps. Strong habits.</p></div><button class="btn" id="logWeightBtn">＋ Weight</button></div>
+      <div class="grid">
+        <div class="card">
+          <div class="card-head"><h2>Daily nutrition</h2><span class="eyebrow" id="calorieBudgetLabel">DAILY TARGET</span></div>
+          <div class="nutrition-main">
+            <div class="ring-wrap"><svg viewBox="0 0 180 180" role="img" aria-label="Calories remaining progress"><circle class="ring-track" cx="90" cy="90" r="76"></circle><circle class="ring-progress" id="calorieRing" cx="90" cy="90" r="76" stroke-dasharray="477.5" stroke-dashoffset="477.5"></circle></svg><div class="ring-center"><span>CALORIES LEFT</span><strong id="caloriesLeft">2,150</strong><small id="caloriesStatus">of 2,150 kcal</small></div></div>
+            <div class="macro-list">
+              <div><div class="macro-top"><strong>Protein</strong><span id="proteinText">0 / 160 g</span></div><div class="bar protein"><span id="proteinBar"></span></div></div>
+              <div><div class="macro-top"><strong>Carbs</strong><span id="carbsText">0 / 220 g</span></div><div class="bar carbs"><span id="carbsBar"></span></div></div>
+              <div><div class="macro-top"><strong>Fats</strong><span id="fatsText">0 / 70 g</span></div><div class="bar fats"><span id="fatsBar"></span></div></div>
+            </div>
+          </div>
+          <div class="quick-stats"><div class="stat"><span>Food logged</span><strong id="eatenStat">0 kcal</strong></div><div class="stat"><span>Exercise burn</span><strong id="burnedStat">0 kcal</strong></div><div class="stat"><span>Daily target</span><strong id="targetStat">2,150</strong></div></div>
+        </div>
+        <div class="card">
+          <div class="card-head"><h2>Quick add meal</h2><span class="eyebrow">AI FOOD LOG</span></div>
+          <p class="subtle small">Describe what you ate. FORM estimates nutrition from built-in food references, or an optional AI endpoint you configure.</p>
+          <form class="chatbox" id="foodForm"><input id="foodInput" placeholder="e.g. 3 scrambled eggs and a banana" aria-label="What did you eat?" autocomplete="off"><button class="btn" type="submit">Add</button></form>
+          <div class="workout-controls" style="margin-top:10px"><button class="btn secondary" id="saveMealBtn">♡ Save meal</button><button class="btn secondary" id="savedMealsBtn">Saved meals</button><button class="btn secondary" id="barcodeBtn">▦ Scan barcode</button></div>
+          <div class="small subtle" id="foodHint" style="margin-top:9px">Estimates are approximate. Review portions after adding.</div>
+          <div class="section"><div class="card-head"><h2>Today's food</h2><button class="mini-btn" id="clearFoodBtn">Clear day</button></div><div id="foodLog"></div></div>
+        </div>
+      </div>
+      <div class="two-col section">
+        <div class="card"><div class="card-head"><h2>Body weight</h2><button class="mini-btn" id="weightQuickBtn">＋ Log</button></div><div class="chart-wrap" id="weightChart"></div><div class="legend"><span><i></i>Weight (kg)</span><span id="weightLatest">No entries yet</span></div></div>
+        <div class="card"><div class="card-head"><h2>Today's movement</h2><span class="eyebrow">WORKOUT</span></div><div id="todayWorkoutSummary" class="empty">No workout logged today. Show up for yourself.</div><button class="btn secondary" style="width:100%;margin-top:10px" data-tab="workout">Go to workout →</button></div>
+      </div>
+    </section>
+
+    <section class="view" id="workoutView">
+      <div class="hello"><div><div class="eyebrow">TRAIN WITH INTENTION</div><h1>Workout</h1><p>Build consistency, one set at a time.</p></div><button class="btn" id="blankWorkoutBtn">＋ Blank workout</button></div>
+      <div id="workoutHome">
+        <div class="card workout-hero"><div class="eyebrow">YOUR NEXT SESSION</div><h2>Make today count.</h2><p>Choose a training split or start a blank session. Your sets, volume and workout history are saved on this device.</p><button class="btn" id="startLastBtn">Start workout →</button></div>
+        <div class="section"><div class="card-head"><h2>Start from a template</h2><span class="eyebrow">3 ROUTINES</span></div><div class="template-grid">
+          <button class="template" data-template="Push"><div class="template-icon">↗</div><div><strong>Push day</strong><span>Chest · Shoulders · Triceps</span></div></button>
+          <button class="template" data-template="Pull"><div class="template-icon">↙</div><div><strong>Pull day</strong><span>Back · Biceps · Rear delts</span></div></button>
+          <button class="template" data-template="Legs"><div class="template-icon">⌁</div><div><strong>Leg day</strong><span>Quads · Hamstrings · Glutes</span></div></button>
+        </div></div>
+        <div class="section card"><div class="card-head"><h2>Recent workouts</h2><span class="eyebrow">HISTORY</span></div><div id="recentWorkouts" class="empty">Your completed sessions will appear here.</div></div>
+      </div>
+      <div id="activeWorkout" class="hidden">
+        <div class="card"><div class="card-head"><div><div class="eyebrow" id="sessionLabel">ACTIVE SESSION</div><h2 id="sessionTitle" style="font-size:22px;margin-top:5px">Workout</h2></div><div class="timer" id="workoutTimer">00:00</div></div><div class="workout-controls"><button class="btn secondary" id="addExerciseBtn">＋ Add exercise</button><button class="btn ghost" id="cancelWorkoutBtn">Discard</button><button class="btn" id="finishWorkoutBtn">Finish workout ✓</button></div></div>
+        <div class="section exercise-list" id="activeExercises"></div>
+        <div class="section card"><div class="card-head"><h2>Session summary</h2></div><div class="quick-stats"><div class="stat"><span>Exercises</span><strong id="sessionExercises">0</strong></div><div class="stat"><span>Completed sets</span><strong id="sessionSets">0</strong></div><div class="stat"><span>Total volume</span><strong id="sessionVolume">0 kg</strong></div></div></div>
+      </div>
+    </section>
+
+    <section class="view" id="historyView">
+      <div class="hello"><div><div class="eyebrow">YOUR CONSISTENCY</div><h1>History</h1><p>See how your habits add up over time.</p></div></div>
+      <div class="two-col">
+        <div class="card"><div class="card-head"><button class="icon-btn" id="prevMonth">‹</button><h2 id="calendarMonth">October 2026</h2><button class="icon-btn" id="nextMonth">›</button></div><div class="calendar" id="calendarGrid"></div><p class="notice">Lime dots indicate days with food logs or completed workouts.</p></div>
+        <div class="card"><div class="card-head"><h2 id="selectedDateTitle">Today's summary</h2><span class="eyebrow">DAILY TOTALS</span></div><div class="history-summary"><div class="stat"><span>Calories</span><strong id="histCalories">0</strong></div><div class="stat"><span>Protein</span><strong id="histProtein">0 g</strong></div><div class="stat"><span>Carbs</span><strong id="histCarbs">0 g</strong></div><div class="stat"><span>Fats</span><strong id="histFats">0 g</strong></div></div><div class="section"><h2 style="margin-bottom:12px">Workout sessions</h2><div id="historyWorkouts" class="empty">No workout for this day.</div></div><div class="section"><h2 style="margin-bottom:12px">Food entries</h2><div id="historyFoods" class="empty">No food entries for this day.</div></div></div>
+      </div>
+      <div class="section card"><div class="card-head"><h2>Weekly nutrition averages</h2><span class="eyebrow">LAST 7 DAYS</span></div><div class="quick-stats"><div class="stat"><span>Avg. calories</span><strong id="weeklyCalories">—</strong></div><div class="stat"><span>Avg. protein</span><strong id="weeklyProtein">—</strong></div><div class="stat"><span>Days logged</span><strong id="weeklyDays">0 / 7</strong></div></div></div>
+      <div class="section card"><div class="card-head"><h2>Training analytics</h2><span class="eyebrow">COMPOUND LIFTS</span></div><div class="two-col"><div><div class="card-head"><h2>Volume over time</h2></div><div class="chart-wrap" id="volumeChart"></div></div><div><div class="card-head"><h2>Estimated 1RM trends</h2></div><div id="oneRmAnalytics"></div></div></div><p class="notice">Volume = weight × reps across logged sets. Estimated 1RM uses the Epley formula (weight × [1 + reps / 30]) and is only a rough estimate.</p></div>
+    </section>
+
+    <section class="view" id="profileView">
+      <div class="hello"><div><div class="eyebrow">YOUR BASELINE</div><h1>Profile & targets</h1><p>Keep your targets aligned with your current goal.</p></div></div>
+      <div class="two-col"><div class="card"><div class="card-head"><h2>Personal details</h2><button class="mini-btn" id="editProfileBtn">Edit</button></div><div id="profileDetails"></div></div><div class="card"><div class="card-head"><h2>Daily targets</h2><span class="eyebrow">AUTO-CALCULATED</span></div><div id="profileTargets"></div><div class="section" style="border-top:1px solid var(--line);padding-top:16px"><div class="card-head"><h2>Cloud sync</h2><span class="eyebrow" id="syncStatus">LOCAL ONLY</span></div><p class="subtle small">Optional Supabase sync lets you carry your data between devices. Configure your project URL and anon key, then sign in anonymously. Do not use a service-role key here.</p><div class="form-grid"><div class="field" style="grid-column:1/-1"><label>Supabase project URL</label><input id="supabaseUrl" placeholder="https://your-project.supabase.co" value=""></div><div class="field" style="grid-column:1/-1"><label>Supabase anon/public key</label><input id="supabaseAnonKey" placeholder="sb_publishable_… or anon key" value=""></div></div><div class="workout-controls" style="margin-top:12px"><button class="btn secondary" id="connectCloudBtn">Connect / sync</button><button class="btn ghost" id="disconnectCloudBtn">Disconnect</button></div></div>
+      <p class="notice">Calories use Mifflin–St Jeor BMR × activity factor, then goal adjustment. Protein is bodyweight × your selected g/kg. Fat is 25% of calories; carbs fill the remainder. These are estimates, not medical advice.</p><button class="btn secondary" id="recalculateBtn">Recalculate targets</button><button class="btn ghost" id="exportBtn" style="margin-left:6px">Export data</button><button class="btn ghost" id="importBtn" style="margin-top:8px">Import backup</button><input id="importFile" type="file" accept="application/json" class="hidden"></div></div>
+    </section>
+  </main>
+</div>
+
+<nav class="tabs" aria-label="Main navigation"><button class="tab active" data-tab="dashboard"><span class="ico">◉</span><span>Today</span></button><button class="tab" data-tab="workout"><span class="ico">↗</span><span>Workout</span></button><button class="tab" data-tab="history"><span class="ico">▦</span><span>History</span></button><button class="tab" data-tab="profile"><span class="ico">◌</span><span>Profile</span></button></nav>
+<div class="toast" id="toast"></div>
+<div class="modal-backdrop" id="barcodeBackdrop"><div class="modal"><div class="modal-head"><h2>Scan a food barcode</h2><button class="icon-btn" id="barcodeClose">×</button></div><video id="barcodeVideo" playsinline style="width:100%;border-radius:12px;background:#08090a;max-height:260px"></video><p class="notice">Barcode scanning needs a supported browser and camera permission. You can also type the barcode number below.</p><div class="field"><label>Barcode number</label><input id="barcodeManual" inputmode="numeric" placeholder="e.g. 5449000000996"></div><div class="modal-actions"><button class="btn secondary" id="barcodeCancel">Cancel</button><button class="btn" id="barcodeLookup">Look up food</button></div><div id="barcodeResult" class="small subtle" style="margin-top:12px"></div></div></div>
+
+<div class="modal-backdrop" id="modalBackdrop"><div class="modal"><div class="modal-head"><h2 id="modalTitle">Add item</h2><button class="icon-btn" id="modalClose" aria-label="Close">×</button></div><div id="modalBody"></div><div class="modal-actions" id="modalActions"></div></div></div>
+<div class="rest-overlay" id="restOverlay"><div class="rest-box"><div class="eyebrow">RECOVERY TIME</div><h2 style="margin:10px 0">Take a breath.</h2><div class="rest-number" id="restCountdown">01:30</div><div class="workout-controls" style="justify-content:center"><button class="btn secondary" id="restAdd15">+15 sec</button><button class="btn" id="restSkip">Skip rest</button></div></div></div>
+
+<div class="onboarding" id="onboarding"><div class="onboard-card"><div class="brand">F<span>O</span>RM<span>•</span></div><div class="steps" id="onboardSteps"><span class="done"></span><span></span><span></span><span></span></div><div class="eyebrow" id="onboardEyebrow">STEP 1 OF 4</div><h1 id="onboardTitle">Let's set your baseline.</h1><p id="onboardDesc">A few details help us estimate a useful starting point.</p><div id="onboardFields"></div><div class="onboard-actions"><button class="btn ghost" id="onboardBack">Back</button><button class="btn" id="onboardNext">Continue →</button></div></div></div>
+<script>
+(() => {
+'use strict';
+const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
+const todayKey = () => dateKey(new Date());
+const dateKey = d => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+const fmt = n => Math.round(Number(n)||0).toLocaleString();
+const round1 = n => Math.round((Number(n)||0)*10)/10;
+const uid = () => Math.random().toString(36).slice(2,10);
+const defaultState = () => ({profile:null,days:{},weights:[],workouts:[],active:null,settings:{restSeconds:90,aiEndpoint:'',aiKey:''}});
+let state = loadState(), onboardStep=0, onboardDraft={}, calendarCursor=new Date(), selectedDate=todayKey(), timerInterval=null, restInterval=null, restLeft=90, sessionStartedAt=null;
+function loadState(){try{return {...defaultState(),...JSON.parse(localStorage.getItem('formFitnessState')||'{}')}}catch(e){return defaultState()}}
+function save(){localStorage.setItem('formFitnessState',JSON.stringify(state))}
+function ensureDay(key=todayKey()){if(!state.days[key])state.days[key]={foods:[],burned:0};return state.days[key]}
+const foodsDB=[
+ {names:['egg','eggs','scrambled egg','scrambled eggs','boiled egg'],name:'Eggs',emoji:'🍳',kcal:72,p:6.3,c:.4,f:4.8,unit:'egg'},
+ {names:['banana','bananas'],name:'Banana',emoji:'🍌',kcal:105,p:1.3,c:27,f:.4,unit:'banana'},
+ {names:['oats','oatmeal','porridge'],name:'Oats',emoji:'🥣',kcal:150,p:5,c:27,f:3,unit:'bowl'},
+ {names:['chicken breast','chicken'],name:'Chicken breast',emoji:'🍗',kcal:165,p:31,c:0,f:3.6,unit:'100 g'},
+ {names:['rice','white rice','brown rice'],name:'Cooked rice',emoji:'🍚',kcal:205,p:4.3,c:45,f:.4,unit:'cup'},
+ {names:['salmon'],name:'Salmon',emoji:'🐟',kcal:208,p:20,c:0,f:13,unit:'100 g'},
+ {names:['bread','toast','slice of bread'],name:'Bread',emoji:'🍞',kcal:90,p:3.5,c:17,f:1.2,unit:'slice'},
+ {names:['milk'],name:'Milk',emoji:'🥛',kcal:122,p:8,c:12,f:5,unit:'cup'},
+ {names:['greek yogurt','yogurt','yoghurt'],name:'Greek yogurt',emoji:'🥣',kcal:130,p:17,c:8,f:3.5,unit:'170 g'},
+ {names:['whey','protein shake','protein powder','scoop protein'],name:'Protein shake',emoji:'🥤',kcal:120,p:24,c:3,f:2,unit:'scoop'},
+ {names:['apple','apples'],name:'Apple',emoji:'🍎',kcal:95,p:.5,c:25,f:.3,unit:'apple'},
+ {names:['avocado'],name:'Avocado',emoji:'🥑',kcal:240,p:3,c:13,f:22,unit:'whole'},
+ {names:['potato','potatoes'],name:'Potato',emoji:'🥔',kcal:160,p:4,c:37,f:.2,unit:'medium'},
+ {names:['pasta','spaghetti'],name:'Cooked pasta',emoji:'🍝',kcal:220,p:8,c:43,f:1.3,unit:'cup'},
+ {names:['beef','steak'],name:'Beef',emoji:'🥩',kcal:250,p:26,c:0,f:16,unit:'100 g'},
+ {names:['peanut butter'],name:'Peanut butter',emoji:'🥜',kcal:95,p:4,c:3.5,f:8,unit:'tbsp'},
+ {names:['cheese'],name:'Cheese',emoji:'🧀',kcal:110,p:7,c:1,f:9,unit:'30 g'},
+ {names:['broccoli'],name:'Broccoli',emoji:'🥦',kcal:55,p:4,c:11,f:.6,unit:'cup'},
+ {names:['orange','oranges'],name:'Orange',emoji:'🍊',kcal:62,p:1.2,c:15,f:.2,unit:'orange'},
+ {names:['pizza','slice pizza'],name:'Pizza',emoji:'🍕',kcal:285,p:12,c:36,f:10,unit:'slice'}
+];
+const exerciseDB=[
+ ['Bench Press','Chest'],['Incline Dumbbell Press','Chest'],['Push-up','Chest'],['Cable Fly','Chest'],['Chest Press Machine','Chest'],
+ ['Deadlift','Back'],['Lat Pulldown','Back'],['Pull-up','Back'],['Barbell Row','Back'],['Seated Cable Row','Back'],
+ ['Squat','Legs'],['Leg Press','Legs'],['Romanian Deadlift','Legs'],['Leg Curl','Legs'],['Walking Lunge','Legs'],['Calf Raise','Legs'],
+ ['Overhead Press','Shoulders'],['Lateral Raise','Shoulders'],['Rear Delt Fly','Shoulders'],
+ ['Bicep Curl','Arms'],['Hammer Curl','Arms'],['Triceps Pushdown','Arms'],['Skull Crusher','Arms'],
+ ['Plank','Core'],['Cable Crunch','Core'],['Hanging Knee Raise','Core']
+].map(([name,group])=>({name,group}));
+const templates={
+ Push:['Bench Press','Incline Dumbbell Press','Overhead Press','Lateral Raise','Triceps Pushdown'],
+ Pull:['Deadlift','Lat Pulldown','Barbell Row','Rear Delt Fly','Bicep Curl'],
+ Legs:['Squat','Romanian Deadlift','Leg Press','Leg Curl','Calf Raise']
+};
+function calculateTargets(p){
+ const s=p.sex==='male'?5:-161;
+ const bmr=10*p.weight+6.25*p.height-5*p.age+s;
+ const factors={Sedentary:1.2,Light:1.375,Moderate:1.55,Active:1.725};
+ let kcal=Math.round(bmr*(factors[p.activity]||1.2));
+ if(p.goal==='Lose weight')kcal-=500; else if(p.goal==='Gain muscle')kcal+=300;
+ kcal=Math.max(1200,kcal);
+ const protein=Math.round(p.weight*(Number(p.proteinPerKg)||1.6));
+ const fats=Math.round(kcal*.25/9);
+ const carbs=Math.max(0,Math.round((kcal-protein*4-fats*9)/4));
+ return {bmr:Math.round(bmr),calories:kcal,protein,fats,carbs};
+}
+function dayTotals(key=todayKey()){const d=state.days[key]||{foods:[],burned:0};return d.foods.reduce((a,f)=>({kcal:a.kcal+f.kcal,p:a.p+f.p,c:a.c+f.c,f:a.f+f.f}),{kcal:0,p:0,c:0,f:0})}
+function targets(){return state.profile?calculateTargets(state.profile):{calories:2150,protein:160,carbs:220,fats:70}}
+function showToast(s){const t=$('#toast');t.textContent=s;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2400)}
+function navigate(tab){$$('.tab').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));$$('.view').forEach(v=>v.classList.toggle('active',v.id===tab+'View'));if(tab==='history')renderHistory();if(tab==='profile')renderProfile();if(tab==='workout')renderWorkout();window.scrollTo({top:0,behavior:'smooth'})}
+$$('[data-tab]').forEach(b=>b.addEventListener('click',()=>navigate(b.dataset.tab)));
+function renderDashboard(){
+ const p=state.profile||{goal:'Build healthy habits'};const t=targets(),d=ensureDay(),tot=dayTotals();
+ const burned=d.burned||0, remaining=t.calories-tot.kcal+burned, eaten=tot.kcal;
+ $('#todayPill').textContent=new Date().toLocaleDateString(undefined,{weekday:'short',month:'short',day:'numeric'}).toUpperCase();
+ $('#greeting').textContent=(new Date().getHours()<12?'Good morning.':new Date().getHours()<18?'Good afternoon.':'Good evening.');
+ $('#goalLine').textContent=state.profile?`${p.goal} · Keep your streak alive.`:'Set up your profile to personalize your targets.';
+ $('#caloriesLeft').textContent=fmt(remaining);$('#caloriesStatus').textContent=`of ${fmt(t.calories)} kcal`;
+ const ratio=Math.min(1,Math.max(0,eaten/Math.max(t.calories,1)));
+ $('#calorieRing').style.strokeDashoffset=477.5*(1-ratio);
+ $('#calorieRing').style.stroke=remaining<0?'var(--red)':'var(--lime)';
+ $('#proteinText').textContent=`${round1(tot.p)} / ${t.protein} g`;$('#carbsText').textContent=`${round1(tot.c)} / ${t.carbs} g`;$('#fatsText').textContent=`${round1(tot.f)} / ${t.fats} g`;
+ $('#proteinBar').style.width=Math.min(100,tot.p/Math.max(t.protein,1)*100)+'%';$('#carbsBar').style.width=Math.min(100,tot.c/Math.max(t.carbs,1)*100)+'%';$('#fatsBar').style.width=Math.min(100,tot.f/Math.max(t.fats,1)*100)+'%';
+ $('#eatenStat').textContent=fmt(eaten)+' kcal';$('#burnedStat').textContent=fmt(burned)+' kcal';$('#targetStat').textContent=fmt(t.calories);
+ renderFoodLog();renderWeightChart();renderTodayWorkout();
+}
+function renderFoodLog(){
+ const d=ensureDay(), groups=['Breakfast','Lunch','Dinner','Snacks'];
+ $('#foodLog').innerHTML=groups.map(g=>{const items=d.foods.filter(f=>f.meal===g);return `<div class="meal-group"><div class="meal-title"><span>${g}</span><span>${items.length?fmt(items.reduce((s,f)=>s+f.kcal,0))+' kcal':''}</span></div>${items.length?items.map(f=>`<div class="food-row"><div class="food-icon">${f.emoji||'🍽️'}</div><div class="food-info"><strong>${esc(f.name)}</strong><span>${round1(f.p)}g protein · ${round1(f.c)}g carbs · ${round1(f.f)}g fat</span></div><div class="food-kcal">${fmt(f.kcal)}<small>kcal</small></div><div class="row-actions"><button class="mini-btn" data-edit-food="${f.id}" aria-label="Edit ${esc(f.name)}">✎</button><button class="mini-btn" data-delete-food="${f.id}" aria-label="Delete ${esc(f.name)}">×</button></div></div>`).join(''):'<div class="small subtle" style="padding:3px 0 5px">Nothing logged</div>'}</div>`}).join('');
+ $$('[data-edit-food]').forEach(b=>b.onclick=()=>editFood(b.dataset.editFood));$$('[data-delete-food]').forEach(b=>b.onclick=()=>deleteFood(b.dataset.deleteFood));
+}
+function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function parseFood(text){
+ const lower=text.toLowerCase();let results=[],remaining=lower;
+ // Detect quantity before/after a known food name, using simple built-in serving estimates.
+ foodsDB.forEach(food=>{
+   let found=false;
+   for(const alias of food.names.sort((a,b)=>b.length-a.length)){
+     const escaped=alias.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+     const re=new RegExp('(\\d+(?:\\.\\d+)?)?\\s*(?:x\\s*)?'+escaped+'(?:es|s)?\\b','gi');
+     let m;while((m=re.exec(remaining))!==null){
+       let qty=Number(m[1]||1);
+       // gram quantities are supported for foods with per-100g reference.
+       let before=remaining.slice(Math.max(0,m.index-8),m.index);
+       const gram=before.match(/(\\d+)\\s*g\\s*$/);
+       if(gram&&['Chicken breast','Salmon','Beef'].includes(food.name))qty=Number(gram[1])/100;
+       if(food.name==='Eggs'&&/scrambled/.test(m[0]))qty=Math.max(1,qty);
+       results.push({name:food.name,emoji:food.emoji,kcal:Math.round(food.kcal*qty),p:round1(food.p*qty),c:round1(food.c*qty),f:round1(food.f*qty),quantity:qty,unit:food.unit,meal:inferMeal(),id:uid()});
+       remaining=remaining.slice(0,m.index)+' '.repeat(m[0].length)+remaining.slice(m.index+m[0].length);found=true;break;
+     }
+     if(found)break;
+   }
+ });
+ // if no recognized food, add transparent generic estimate based on words rather than pretending precision.
+ if(!results.length){
+   const kcalMatch=lower.match(/(\\d{2,4})\\s*(?:kcal|calories)/);
+   const kcal=kcalMatch?Number(kcalMatch[1]):350;
+   results.push({id:uid(),name:text.trim().slice(0,70)||'Meal estimate',emoji:'🍽️',kcal,p:Math.round(kcal*.22/4),c:Math.round(kcal*.48/4),f:Math.round(kcal*.30/9),meal:inferMeal(),quantity:1,unit:'serving',note:'generic estimate'});
+ }
+ return results;
+}
+function inferMeal(){const h=new Date().getHours();return h<11?'Breakfast':h<15?'Lunch':h<20?'Dinner':'Snacks'}
+async function addFoodText(text){
+ if(!text.trim())return;
+ // Optional endpoint expects POST {text, foods:[...]} and returns {items:[{name,quantity,meal,calories,protein,carbs,fat}]}.
+ const endpoint=state.settings?.aiEndpoint;
+ if(endpoint){
+   try{
+    const res=await fetch(endpoint,{method:'POST',headers:{'Content-Type':'application/json',...(state.settings.aiKey?{'Authorization':'Bearer '+state.settings.aiKey}:{})},body:JSON.stringify({text,foodsDB:foodsDB.map(f=>({name:f.name,kcal:f.kcal,protein:f.p,carbs:f.c,fat:f.f,unit:f.unit}))})});
+    if(!res.ok)throw new Error('AI endpoint error');
+    const data=await res.json();
+    if(Array.isArray(data.items)&&data.items.length){
+      const items=data.items.map(x=>({id:uid(),name:x.name||'Meal item',emoji:'🍽️',kcal:Number(x.calories??x.kcal)||0,p:Number(x.protein??x.p)||0,c:Number(x.carbs??x.c)||0,f:Number(x.fat??x.f)||0,meal:x.meal||inferMeal(),quantity:Number(x.quantity)||1}));
+      ensureDay().foods.push(...items);save();renderDashboard();showToast('Meal added');return;
+    }
+   }catch(e){showToast('AI unavailable — using food estimates')}
+ }
+ const items=parseFood(text);ensureDay().foods.push(...items);save();renderDashboard();showToast(`${items.length} item${items.length===1?'':'s'} added`);
+}
+$('#foodForm').addEventListener('submit',async e=>{e.preventDefault();const v=$('#foodInput').value;$('#foodInput').value='';await addFoodText(v)});
+function editFood(id){
+ const food=ensureDay().foods.find(f=>f.id===id);if(!food)return;
+ openModal('Edit food item',`<div class="form-grid"><div class="field" style="grid-column:1/-1"><label>Food name</label><input id="efName" value="${esc(food.name)}"></div><div class="field"><label>Calories (kcal)</label><input id="efKcal" type="number" min="0" value="${food.kcal}"></div><div class="field"><label>Protein (g)</label><input id="efP" type="number" min="0" step=".1" value="${food.p}"></div><div class="field"><label>Carbs (g)</label><input id="efC" type="number" min="0" step=".1" value="${food.c}"></div><div class="field"><label>Fats (g)</label><input id="efF" type="number" min="0" step=".1" value="${food.f}"></div><div class="field" style="grid-column:1/-1"><label>Meal</label><select id="efMeal">${['Breakfast','Lunch','Dinner','Snacks'].map(m=>`<option ${food.meal===m?'selected':''}>${m}</option>`).join('')}</select></div></div>`,[{text:'Cancel',cls:'btn secondary',fn:closeModal},{text:'Save changes',cls:'btn',fn:()=>{food.name=$('#efName').value;food.kcal=Number($('#efKcal').value)||0;food.p=Number($('#efP').value)||0;food.c=Number($('#efC').value)||0;food.f=Number($('#efF').value)||0;food.meal=$('#efMeal').value;save();closeModal();renderDashboard();showToast('Food updated')}}]);
+}
+function deleteFood(id){ensureDay().foods=ensureDay().foods.filter(f=>f.id!==id);save();renderDashboard();showToast('Food removed')}
+$('#clearFoodBtn').onclick=()=>{if(confirm("Clear today's food log?")){ensureDay().foods=[];save();renderDashboard();showToast('Food log cleared')}};
+function openModal(title,body,actions){$('#modalTitle').textContent=title;$('#modalBody').innerHTML=body;$('#modalActions').innerHTML='';actions.forEach(a=>{const b=document.createElement('button');b.className=a.cls||'btn';b.textContent=a.text;b.onclick=a.fn;$('#modalActions').append(b)});$('#modalBackdrop').classList.add('show')}
+function closeModal(){$('#modalBackdrop').classList.remove('show')}
+$('#modalClose').onclick=closeModal;$('#modalBackdrop').addEventListener('click',e=>{if(e.target===$('#modalBackdrop'))closeModal()});
+function weightModal(){
+ const latest=state.weights.length?state.weights[state.weights.length-1].weight:(state.profile?.weight||'');
+ openModal('Log body weight',`<div class="field"><label>Weight (kg)</label><input id="weightInput" type="number" min="25" max="350" step=".1" value="${latest}" placeholder="e.g. 82.5"></div><p class="notice">Your entry is saved with today's date and updates the weight trend.</p>`,[{text:'Cancel',cls:'btn secondary',fn:closeModal},{text:'Save weight',cls:'btn',fn:()=>{const w=Number($('#weightInput').value);if(!(w>25&&w<350)){showToast('Enter a valid weight');return}state.weights.push({date:todayKey(),weight:w});if(state.profile)state.profile.weight=w;save();closeModal();renderDashboard();renderProfile();showToast('Weight saved')}}]);
+}
+$('#logWeightBtn').onclick=weightModal;$('#weightQuickBtn').onclick=weightModal;
+function renderWeightChart(){
+ const el=$('#weightChart'),entries=state.weights.slice(-10);
+ if(!entries.length){el.innerHTML='<div class="empty" style="padding-top:85px">Log your weight to start your trend.</div>';$('#weightLatest').textContent='No entries yet';return}
+ const vals=entries.map(x=>x.weight),min=Math.min(...vals)-1,max=Math.max(...vals)+1,range=Math.max(1,max-min),W=500,H=230,pad={l:32,r:12,t:15,b:28};
+ const points=vals.map((v,i)=>({x:pad.l+(entries.length===1?0.5:i/(entries.length-1))*(W-pad.l-pad.r),y:pad.t+(max-v)/range*(H-pad.t-pad.b),v}));
+ const path=points.map((p,i)=>(i?'L':'M')+p.x.toFixed(1)+','+p.y.toFixed(1)).join(' ');
+ const grid=[0,1,2,3].map(i=>{let y=pad.t+i*(H-pad.t-pad.b)/3,v=max-i*range/3;return `<line x1="${pad.l}" y1="${y}" x2="${W-pad.r}" y2="${y}" stroke="#2b2e35"/><text x="0" y="${y+4}" class="chart-label">${round1(v)}</text>`}).join('');
+ el.innerHTML=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Body weight trend">${grid}<path d="${path}" fill="none" stroke="#c5f36a" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>${points.map(p=>`<circle cx="${p.x}" cy="${p.y}" r="4" fill="#c5f36a" stroke="#181a1e" stroke-width="2"/>`).join('')}${points.map((p,i)=>i===0||i===points.length-1?`<text x="${p.x}" y="${H-6}" text-anchor="middle" class="chart-label">${new Date(entries[i].date+'T12:00:00').toLocaleDateString(undefined,{month:'short',day:'numeric'})}</text>`:'').join('')}</svg>`;
+ $('#weightLatest').textContent=`Latest ${round1(entries[entries.length-1].weight)} kg`;
+}
+function renderTodayWorkout(){
+ const today=state.workouts.filter(w=>w.date===todayKey());
+ $('#todayWorkoutSummary').innerHTML=today.length?today.map(w=>`<div class="food-row"><div class="food-icon">↗</div><div class="food-info"><strong>${esc(w.name)}</strong><span>${w.exercises.length} exercises · ${fmt(w.volume)} kg volume</span></div><div class="food-kcal">${w.duration||0}<small>min</small></div></div>`).join(''):'<div class="empty">No workout logged today. Show up for yourself.</div>';
+}
+function renderWorkout(){
+ const active=!!state.active;$('#workoutHome').classList.toggle('hidden',active);$('#activeWorkout').classList.toggle('hidden',!active);
+ if(!active){$('#recentWorkouts').innerHTML=state.workouts.slice().reverse().slice(0,5).map(w=>`<div class="food-row"><div class="food-icon">↗</div><div class="food-info"><strong>${esc(w.name)}</strong><span>${w.date} · ${w.exercises.length} exercises · ${fmt(w.volume)} kg</span></div></div>`).join('')||'Your completed sessions will appear here.';return}
+ $('#sessionTitle').textContent=state.active.name;renderActiveExercises();updateSessionStats();startWorkoutClock();
+}
+function beginWorkout(name,exercises=[]){
+ if(state.active&&!confirm('Discard the current workout and start a new one?'))return;
+ state.active={id:uid(),name,startedAt:Date.now(),date:todayKey(),exercises:exercises.map(n=>({id:uid(),name:n,group:(exerciseDB.find(e=>e.name===n)||{}).group||'Other',sets:[{weight:0,reps:10,done:false},{weight:0,reps:10,done:false},{weight:0,reps:10,done:false}]}))};
+ save();navigate('workout');renderWorkout();
+}
+$('#blankWorkoutBtn').onclick=()=>beginWorkout('Blank Workout');
+$('#startLastBtn').onclick=()=>beginWorkout('Full Body Workout',['Squat','Bench Press','Lat Pulldown','Overhead Press']);
+$$('[data-template]').forEach(b=>b.onclick=()=>beginWorkout(b.dataset.template+' Day',templates[b.dataset.template]));
+function renderActiveExercises(){
+ const root=$('#activeExercises');root.innerHTML=state.active.exercises.map((ex,ei)=>`<div class="exercise-card"><div class="exercise-head"><div><strong>${esc(ex.name)}</strong><small>${esc(ex.group)} · ${ex.sets.length} sets</small></div><div class="row-actions"><button class="mini-btn" data-add-set="${ex.id}">＋ Set</button><button class="mini-btn" data-remove-ex="${ex.id}">×</button></div></div><table class="set-table"><thead><tr><th>Set</th><th>Weight (kg)</th><th>Reps</th><th>Done</th></tr></thead><tbody>${ex.sets.map((s,si)=>`<tr><td class="set-no">${si+1}</td><td><input type="number" min="0" step=".5" value="${s.weight}" data-set-weight="${ex.id}" data-index="${si}" aria-label="Set ${si+1} weight"></td><td><input type="number" min="0" value="${s.reps}" data-set-reps="${ex.id}" data-index="${si}" aria-label="Set ${si+1} reps"></td><td><input type="checkbox" ${s.done?'checked':''} data-set-done="${ex.id}" data-index="${si}" aria-label="Complete set ${si+1}"></td></tr>`).join('')}</tbody></table></div>`).join('')||'<div class="card empty">Add your first exercise to get started.</div>';
+ $$('[data-add-set]').forEach(b=>b.onclick=()=>{const ex=findExercise(b.dataset.addSet);const last=ex.sets[ex.sets.length-1]||{weight:0,reps:10};ex.sets.push({weight:last.weight,reps:last.reps,done:false});save();renderActiveExercises();updateSessionStats()});
+ $$('[data-remove-ex]').forEach(b=>b.onclick=()=>{state.active.exercises=state.active.exercises.filter(e=>e.id!==b.dataset.removeEx);save();renderActiveExercises();updateSessionStats()});
+ $$('[data-set-weight]').forEach(i=>i.onchange=()=>{findSet(i.dataset.setWeight,i.dataset.index).weight=Number(i.value)||0;save();updateSessionStats()});
+ $$('[data-set-reps]').forEach(i=>i.onchange=()=>{findSet(i.dataset.setReps,i.dataset.index).reps=Number(i.value)||0;save();updateSessionStats()});
+ $$('[data-set-done]').forEach(i=>i.onchange=()=>{const s=findSet(i.dataset.setDone,i.dataset.index);s.done=i.checked;save();updateSessionStats();if(i.checked)startRestTimer()});
+}
+function findExercise(id){return state.active.exercises.find(e=>e.id===id)}
+function findSet(id,index){return findExercise(id).sets[Number(index)]}
+function updateSessionStats(){if(!state.active)return;const exs=state.active.exercises,sets=exs.flatMap(e=>e.sets),done=sets.filter(s=>s.done),volume=done.reduce((sum,s)=>sum+s.weight*s.reps,0);$('#sessionExercises').textContent=exs.length;$('#sessionSets').textContent=`${done.length} / ${sets.length}`;$('#sessionVolume').textContent=fmt(volume)+' kg'}
+function startWorkoutClock(){clearInterval(timerInterval);if(!state.active)return;const tick=()=>{if(!state.active)return;const sec=Math.floor((Date.now()-state.active.startedAt)/1000);$('#workoutTimer').textContent=String(Math.floor(sec/60)).padStart(2,'0')+':'+String(sec%60).padStart(2,'0')};tick();timerInterval=setInterval(tick,1000)}
+$('#addExerciseBtn').onclick=()=>{
+ const opts=exerciseDB.map(e=>`<option value="${esc(e.name)}">${esc(e.name)} — ${esc(e.group)}</option>`).join('');
+ openModal('Add exercise',`<div class="field"><label>Search by muscle group or exercise</label><input id="exerciseSearch" placeholder="e.g. chest, squat, row"></div><div class="field" style="margin-top:12px"><label>Exercise</label><select id="exerciseSelect">${opts}</select></div>`,[{text:'Cancel',cls:'btn secondary',fn:closeModal},{text:'Add exercise',cls:'btn',fn:()=>{const name=$('#exerciseSelect').value;const e=exerciseDB.find(x=>x.name===name);state.active.exercises.push({id:uid(),name,group:e.group,sets:[{weight:0,reps:10,done:false},{weight:0,reps:10,done:false},{weight:0,reps:10,done:false}]});save();closeModal();renderActiveExercises();updateSessionStats()}}]);
+ $('#exerciseSearch').oninput=()=>{const q=$('#exerciseSearch').value.toLowerCase();$('#exerciseSelect').innerHTML=exerciseDB.filter(e=>(e.name+' '+e.group).toLowerCase().includes(q)).map(e=>`<option value="${esc(e.name)}">${esc(e.name)} — ${esc(e.group)}</option>`).join('')};
+};
+$('#cancelWorkoutBtn').onclick=()=>{if(confirm('Discard this workout? Your session will not be saved.')){state.active=null;save();clearInterval(timerInterval);renderWorkout()}};
+$('#finishWorkoutBtn').onclick=()=>{
+ if(!state.active)return;
+ const a=state.active,sec=Math.floor((Date.now()-a.startedAt)/1000),volume=a.exercises.flatMap(e=>e.sets.filter(s=>s.done).map(s=>s.weight*s.reps)).reduce((x,y)=>x+y,0);
+ state.workouts.push({...a,finishedAt:Date.now(),duration:Math.max(1,Math.round(sec/60)),volume});state.active=null;save();clearInterval(timerInterval);renderWorkout();renderTodayWorkout();renderDashboard();showToast('Workout saved. Great work!');
+};
+function startRestTimer(){
+ clearInterval(restInterval);restLeft=Number(state.settings?.restSeconds)||90;$('#restOverlay').classList.add('show');renderRest();
+ restInterval=setInterval(()=>{restLeft--;renderRest();if(restLeft<=0){clearInterval(restInterval);$('#restOverlay').classList.remove('show');showToast('Rest complete — next set!')}},1000);
+}
+function renderRest(){$('#restCountdown').textContent=String(Math.floor(Math.max(0,restLeft)/60)).padStart(2,'0')+':'+String(Math.max(0,restLeft)%60).padStart(2,'0')}
+$('#restSkip').onclick=()=>{clearInterval(restInterval);$('#restOverlay').classList.remove('show')};
+$('#restAdd15').onclick=()=>{restLeft+=15;renderRest()};
+function renderHistory(){
+ const y=calendarCursor.getFullYear(),m=calendarCursor.getMonth();$('#calendarMonth').textContent=calendarCursor.toLocaleDateString(undefined,{month:'long',year:'numeric'});
+ const first=new Date(y,m,1),offset=(first.getDay()+6)%7,days=new Date(y,m+1,0).getDate(),prevDays=new Date(y,m,0).getDate();
+ let html=['M','T','W','T','F','S','S'].map(x=>`<div class="day-label">${x}</div>`).join('');
+ for(let i=0;i<42;i++){
+  let day,dt,muted=false;if(i<offset){day=prevDays-offset+i+1;dt=new Date(y,m-1,day);muted=true}else if(i>=offset+days){day=i-offset-days+1;dt=new Date(y,m+1,day);muted=true}else{day=i-offset+1;dt=new Date(y,m,day)}
+  const key=dateKey(dt),has=!!((state.days[key]?.foods?.length)||state.workouts.some(w=>w.date===key));
+  html+=`<button class="day ${muted?'muted':''} ${key===todayKey()?'today':''} ${key===selectedDate?'selected':''}" data-date="${key}">${day}${has?'<span class="dot"></span>':''}</button>`;
+  if(i>=offset+days&&i%7===6)break;
+ }
+ $('#calendarGrid').innerHTML=html;$$('[data-date]').forEach(b=>b.onclick=()=>{selectedDate=b.dataset.date;renderHistory()});renderSelectedDay();renderAnalytics();
+}
+$('#prevMonth').onclick=()=>{calendarCursor=new Date(calendarCursor.getFullYear(),calendarCursor.getMonth()-1,1);renderHistory()};
+$('#nextMonth').onclick=()=>{calendarCursor=new Date(calendarCursor.getFullYear(),calendarCursor.getMonth()+1,1);renderHistory()};
+function renderSelectedDay(){
+ const key=selectedDate,d=state.days[key]||{foods:[],burned:0},t=dayTotals(key),ws=state.workouts.filter(w=>w.date===key);
+ $('#selectedDateTitle').textContent=new Date(key+'T12:00:00').toLocaleDateString(undefined,{weekday:'short',month:'short',day:'numeric'});
+ $('#histCalories').textContent=fmt(t.kcal);$('#histProtein').textContent=round1(t.p)+' g';$('#histCarbs').textContent=round1(t.c)+' g';$('#histFats').textContent=round1(t.f)+' g';
+ $('#historyWorkouts').innerHTML=ws.map(w=>`<div class="food-row"><div class="food-icon">↗</div><div class="food-info"><strong>${esc(w.name)}</strong><span>${w.duration} min · ${fmt(w.volume)} kg volume</span></div></div>`).join('')||'<div class="empty">No workout for this day.</div>';
+ $('#historyFoods').innerHTML=d.foods.map(f=>`<div class="food-row"><div class="food-icon">${f.emoji||'🍽️'}</div><div class="food-info"><strong>${esc(f.name)}</strong><span>${f.meal}</span></div><div class="food-kcal">${fmt(f.kcal)}<small>kcal</small></div></div>`).join('')||'<div class="empty">No food entries for this day.</div>';
+}
+function renderAnalytics(){
+ const ws=state.workouts.slice().sort((a,b)=>a.date.localeCompare(b.date));
+ const entries=ws.map(w=>({date:w.date,volume:w.volume||0})).slice(-12);
+ const el=$('#volumeChart');
+ if(!entries.length){el.innerHTML='<div class="empty" style="padding-top:80px">Complete a workout to start tracking volume.</div>'}else{
+ const W=500,H=230,pad={l:30,r:12,t:15,b:28},max=Math.max(1,...entries.map(e=>e.volume));
+ const points=entries.map((e,i)=>({x:pad.l+(entries.length===1?.5:i/(entries.length-1))*(W-pad.l-pad.r),y:pad.t+(1-e.volume/max)*(H-pad.t-pad.b),e}));
+ const path=points.map((p,i)=>(i?'L':'M')+p.x+','+p.y).join(' ');
+ el.innerHTML=`<svg viewBox="0 0 ${W} ${H}"><line x1="${pad.l}" y1="${H-pad.b}" x2="${W-pad.r}" y2="${H-pad.b}" stroke="#2b2e35"/><path d="${path}" fill="none" stroke="#8ba7ff" stroke-width="3" stroke-linecap="round"/>${points.map(p=>`<circle cx="${p.x}" cy="${p.y}" r="4" fill="#8ba7ff"/>`).join('')}${points.map((p,i)=>i===0||i===points.length-1?`<text x="${p.x}" y="${H-6}" text-anchor="middle" class="chart-label">${p.e.date.slice(5)}</text>`:'').join('')}<text x="0" y="18" class="chart-label">${fmt(max)} kg</text></svg>`;
+ }
+ const lifts=['Squat','Bench Press','Deadlift'];
+ $('#oneRmAnalytics').innerHTML=lifts.map(lift=>{
+  const points=[];
+  ws.forEach(w=>w.exercises.filter(e=>e.name===lift).forEach(ex=>ex.sets.filter(s=>s.done&&s.weight>0&&s.reps>0).forEach(s=>points.push({date:w.date,oneRm:s.weight*(1+s.reps/30),weight:s.weight,reps:s.reps}))));
+  points.sort((a,b)=>a.date.localeCompare(b.date));
+  const latest=points[points.length-1],prev=points[points.length-2],delta=latest&&prev?latest.oneRm-prev.oneRm:null;
+  return `<div class="food-row"><div class="food-icon">${lift==='Squat'?'⌁':lift==='Bench Press'?'↗':'↙'}</div><div class="food-info"><strong>${lift}</strong><span>${latest?latest.date+' · '+round1(latest.weight)+' kg × '+latest.reps+' reps':'Log completed sets to track'}</span></div><div class="food-kcal">${latest?round1(latest.oneRm)+' kg':'—'}<small>est. 1RM${delta!==null?' · '+(delta>=0?'+':'')+round1(delta):''}</small></div></div>`;
+ }).join('');
+}
+function renderProfile(){
+ const p=state.profile;if(!p){$('#profileDetails').innerHTML='<p class="subtle">Finish onboarding to see your profile.</p>';$('#profileTargets').innerHTML='';return}
+ const t=targets();
+ $('#profileDetails').innerHTML=[['Age',p.age+' years'],['Biological sex',p.sex],['Weight',p.weight+' kg'],['Height',p.height+' cm'],['Activity',p.activity],['Goal',p.goal],['Protein target',p.proteinPerKg+' g/kg']].map(([a,b])=>`<div class="food-row"><div class="food-info"><span>${a}</span><strong>${esc(b)}</strong></div></div>`).join('');
+ $('#profileTargets').innerHTML=[['Daily calories',fmt(t.calories)+' kcal'],['Protein',t.protein+' g'],['Carbohydrates',t.carbs+' g'],['Fat',t.fats+' g'],['Estimated BMR',fmt(t.bmr)+' kcal']].map(([a,b])=>`<div class="food-row"><div class="food-info"><span>${a}</span><strong>${b}</strong></div></div>`).join('');
+}
+function editProfile(){
+ const p=state.profile||{age:35,sex:'male',weight:80,height:175,activity:'Moderate',goal:'Maintain',proteinPerKg:1.6};
+ openModal('Edit profile',`<div class="form-grid">
+ <div class="field"><label>Age</label><input id="pAge" type="number" min="18" max="100" value="${p.age}"></div><div class="field"><label>Biological sex (for BMR)</label><select id="pSex"><option value="male" ${p.sex==='male'?'selected':''}>Male</option><option value="female" ${p.sex==='female'?'selected':''}>Female</option></select></div>
+ <div class="field"><label>Weight (kg)</label><input id="pWeight" type="number" min="30" max="300" step=".1" value="${p.weight}"></div><div class="field"><label>Height (cm)</label><input id="pHeight" type="number" min="100" max="240" value="${p.height}"></div>
+ <div class="field"><label>Activity level</label><select id="pActivity">${['Sedentary','Light','Moderate','Active'].map(x=>`<option ${p.activity===x?'selected':''}>${x}</option>`).join('')}</select></div>
+ <div class="field"><label>Fitness goal</label><select id="pGoal">${['Lose weight','Maintain','Gain muscle'].map(x=>`<option ${p.goal===x?'selected':''}>${x}</option>`).join('')}</select></div>
+ <div class="field"><label>Protein target (g/kg)</label><input id="pProtein" type="number" min=".8" max="3" step=".1" value="${p.proteinPerKg}"></div>
+ </div><div class="field" style="margin-top:14px"><label>Optional AI endpoint URL (expects JSON response)</label><input id="pEndpoint" placeholder="https://your-api.example/estimate" value="${esc(state.settings?.aiEndpoint||'')}"></div><div class="field" style="margin-top:12px"><label>Optional API key (stored only on this device)</label><input id="pKey" type="password" placeholder="Bearer token" value="${esc(state.settings?.aiKey||'')}"></div><p class="notice">For security, avoid putting a private provider API key in a public static app. Use a server-side proxy you control. The built-in food database works without an API.</p>`,[{text:'Cancel',cls:'btn secondary',fn:closeModal},{text:'Save profile',cls:'btn',fn:()=>{
+  const next={age:Number($('#pAge').value),sex:$('#pSex').value,weight:Number($('#pWeight').value),height:Number($('#pHeight').value),activity:$('#pActivity').value,goal:$('#pGoal').value,proteinPerKg:Number($('#pProtein').value)};
+  if(!(next.age>=18&&next.age<=100&&next.weight>=30&&next.height>=100&&next.height<=240&&next.proteinPerKg>=.8&&next.proteinPerKg<=3)){showToast('Please check the profile values');return}
+  state.profile=next;state.settings.aiEndpoint=$('#pEndpoint').value.trim();state.settings.aiKey=$('#pKey').value.trim();save();closeModal();renderDashboard();renderProfile();showToast('Targets recalculated');
+ }}]);
+}
+$('#editProfileBtn').onclick=editProfile;$('#recalculateBtn').onclick=()=>{if(state.profile){save();renderDashboard();renderProfile();showToast('Targets recalculated')}else editProfile()};
+$('#settingsBtn').onclick=editProfile;
+function exportData(){const blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='form-fitness-backup-'+todayKey()+'.json';a.click();URL.revokeObjectURL(url);showToast('Backup exported')}
+$('#exportBtn').onclick=exportData;$('#importBtn').onclick=()=>$('#importFile').click();
+$('#importFile').onchange=async e=>{const f=e.target.files[0];if(!f)return;try{const incoming=JSON.parse(await f.text());if(!incoming||typeof incoming!=='object'||!incoming.days)throw new Error('Invalid');if(confirm('Import this backup and replace the current data?')){state={...defaultState(),...incoming};save();renderDashboard();renderProfile();renderWorkout();renderHistory();showToast('Backup imported')}}catch(err){showToast('Could not read that backup file')}e.target.value=''};
+function renderOnboarding(){
+ const steps=$$('#onboardSteps span');steps.forEach((s,i)=>s.classList.toggle('done',i<=onboardStep));
+ $('#onboardEyebrow').textContent=`STEP ${onboardStep+1} OF 4`;
+ $('#onboardBack').style.visibility=onboardStep===0?'hidden':'visible';
+ const fields=$('#onboardFields');
+ if(onboardStep===0){
+  $('#onboardTitle').textContent='Let’s set your baseline.';$('#onboardDesc').textContent='Start with your body measurements. We’ll use them to estimate your energy needs.';
+  fields.innerHTML=`<div class="form-grid"><div class="field"><label>Age</label><input id="obAge" type="number" min="18" max="100" value="${onboardDraft.age||''}" placeholder="Years"></div><div class="field"><label>Biological sex (for BMR formula)</label><select id="obSex"><option value="">Select…</option><option value="male" ${onboardDraft.sex==='male'?'selected':''}>Male</option><option value="female" ${onboardDraft.sex==='female'?'selected':''}>Female</option></select></div><div class="field"><label>Current weight (kg)</label><input id="obWeight" type="number" min="30" max="300" step=".1" value="${onboardDraft.weight||''}" placeholder="e.g. 80"></div><div class="field"><label>Height (cm)</label><input id="obHeight" type="number" min="100" max="240" value="${onboardDraft.height||''}" placeholder="e.g. 175"></div></div>`;
+ }else if(onboardStep===1){
+  $('#onboardTitle').textContent='How active are you?';$('#onboardDesc').textContent='Choose the activity level that best describes your typical week, outside dedicated workouts.';
+  fields.innerHTML=`<div class="choice-grid">${[['Sedentary','Mostly sitting; little planned exercise'],['Light','Light activity or exercise 1–3 days/week'],['Moderate','Moderate exercise 3–5 days/week'],['Active','Hard exercise or active job most days']].map(([v,d])=>`<button class="choice ${onboardDraft.activity===v?'selected':''}" data-choice="activity" data-value="${v}"><strong>${v}</strong><small>${d}</small></button>`).join('')}</div>`;
+ }else if(onboardStep===2){
+  $('#onboardTitle').textContent='What’s the main goal?';$('#onboardDesc').textContent='Your calorie budget adjusts gently from your estimated maintenance needs.';
+  fields.innerHTML=`<div class="choice-grid">${[['Lose weight','A moderate calorie deficit'],['Maintain','Stay around maintenance'],['Gain muscle','A modest calorie surplus']].map(([v,d])=>`<button class="choice ${onboardDraft.goal===v?'selected':''}" data-choice="goal" data-value="${v}"><strong>${v}</strong><small>${d}</small></button>`).join('')}</div>`;
+ }else{
+  $('#onboardTitle').textContent='Set your protein target.';$('#onboardDesc').textContent='A practical starting point for many active adults is around 1.6–2.2 g/kg/day. Choose what fits your needs.';
+  fields.innerHTML=`<div class="field"><label>Protein target (grams per kg bodyweight)</label><input id="obProtein" type="number" min=".8" max="3" step=".1" value="${onboardDraft.proteinPerKg||1.6}"></div><div id="targetPreview" class="card" style="margin-top:15px;background:#121411"><div class="eyebrow">YOUR ESTIMATED DAILY TARGET</div><h2 id="previewKcal" style="font-size:30px;margin:7px 0">— kcal</h2><div class="subtle small" id="previewMacros">Macros calculated from your inputs.</div></div><p class="notice">This is an estimate, not a medical prescription. If you have a medical condition or a history of disordered eating, consider professional guidance.</p>`;
+  updateOnboardPreview();$('#obProtein').oninput=()=>{onboardDraft.proteinPerKg=Number($('#obProtein').value);updateOnboardPreview()};
+ }
+ $$('[data-choice]').forEach(b=>b.onclick=()=>{onboardDraft[b.dataset.choice]=b.dataset.value;renderOnboarding()});
+}
+function captureOnboard(){
+ if(onboardStep===0){const age=Number($('#obAge').value),sex=$('#obSex').value,weight=Number($('#obWeight').value),height=Number($('#obHeight').value);if(!(age>=18&&age<=100&&sex&&weight>=30&&weight<=300&&height>=100&&height<=240)){showToast('Please complete all fields with valid values');return false}Object.assign(onboardDraft,{age,sex,weight,height})}
+ if(onboardStep===3){const v=Number($('#obProtein').value);if(!(v>=.8&&v<=3)){showToast('Protein target must be between 0.8 and 3.0 g/kg');return false}onboardDraft.proteinPerKg=v}
+ return true;
+}
+function updateOnboardPreview(){if(!onboardDraft.weight||!onboardDraft.height||!onboardDraft.age||!onboardDraft.sex)return;const t=calculateTargets({...onboardDraft,proteinPerKg:Number($('#obProtein')?.value||onboardDraft.proteinPerKg||1.6)});$('#previewKcal').textContent=fmt(t.calories)+' kcal';$('#previewMacros').textContent=`${t.protein}g protein · ${t.carbs}g carbs · ${t.fats}g fat`}
+$('#onboardNext').onclick=()=>{if(!captureOnboard())return;if(onboardStep<3){onboardStep++;renderOnboarding()}else{state.profile={...onboardDraft};save();$('#onboarding').classList.remove('show');renderDashboard();renderProfile();showToast('Your plan is ready')}};$('#onboardBack').onclick=()=>{if(onboardStep>0){captureOnboard();onboardStep--;renderOnboarding()}};
+function init(){
+ if(!state.profile){onboardDraft={};onboardStep=0;$('#onboarding').classList.add('show');renderOnboarding()}
+ renderDashboard();renderWorkout();renderHistory();renderProfile();
+ if(state.active){navigate('workout')}
+}
+// FORM 2.0 enhancements: saved meals, barcode lookup, weekly averages, PWA, optional Supabase sync.
+state.savedMeals = state.savedMeals || [];
+state.cloud = state.cloud || {url:'', key:'', enabled:false};
+let supabaseClient = null, cloudUser = null, cloudSaveTimer = null, barcodeStream = null;
+const originalSave = save;
+save = function() {
+  originalSave();
+  if (state.cloud?.enabled && supabaseClient && cloudUser) {
+    clearTimeout(cloudSaveTimer);
+    cloudSaveTimer = setTimeout(async () => {
+      try {
+        const payload = JSON.parse(JSON.stringify(state));
+        payload.cloud = {url:state.cloud.url, key:state.cloud.key, enabled:true};
+        const {error} = await supabaseClient.from('form_user_state').upsert({user_id:cloudUser.id,state_json:payload,updated_at:new Date().toISOString()},{onConflict:'user_id'});
+        if(error) throw error;
+        setSyncStatus('SYNCED');
+      } catch(err) { setSyncStatus('SYNC ERROR'); console.error(err); }
+    },900);
+  }
+};
+function setSyncStatus(s){const el=$('#syncStatus');if(el)el.textContent=s}
+function renderWeeklyAverages(){
+ const keys=Array.from({length:7},(_,i)=>{const d=new Date();d.setDate(d.getDate()-i);return dateKey(d)});
+ const logged=keys.map(k=>({k,t:dayTotals(k)})).filter(x=>(state.days[x.k]?.foods||[]).length);
+ const kcal=$('#weeklyCalories'),protein=$('#weeklyProtein'),days=$('#weeklyDays');
+ if(kcal)kcal.textContent=logged.length?fmt(logged.reduce((a,x)=>a+x.t.kcal,0)/logged.length):'—';
+ if(protein)protein.textContent=logged.length?round1(logged.reduce((a,x)=>a+x.t.p,0)/logged.length)+' g':'—';
+ if(days)days.textContent=logged.length+' / 7';
+}
+const priorRenderHistory = renderHistory;
+renderHistory = function(){priorRenderHistory();renderWeeklyAverages()};
+const priorRenderDashboard = renderDashboard;
+renderDashboard = function(){priorRenderDashboard();renderWeeklyAverages()};
+$('#saveMealBtn').onclick=()=>{
+ const text=$('#foodInput').value.trim();if(!text){showToast('Type a meal description first');return}
+ const items=parseFood(text);const name=text.length>42?text.slice(0,39)+'…':text;
+ state.savedMeals.push({id:uid(),name,items:items.map(({id,...f})=>f)});save();$('#foodInput').value='';showToast('Meal saved for reuse');
+};
+$('#savedMealsBtn').onclick=()=>{
+ const meals=state.savedMeals||[];
+ const body=meals.length?meals.map(m=>`<div class="food-row"><div class="food-icon">♡</div><div class="food-info"><strong>${esc(m.name)}</strong><span>${fmt(m.items.reduce((s,f)=>s+f.kcal,0))} kcal · ${m.items.length} items</span></div><button class="mini-btn" data-use-meal="${m.id}">Add</button><button class="mini-btn" data-remove-meal="${m.id}">×</button></div>`).join(''):'<div class="empty">No saved meals yet. Type a meal and tap “Save meal”.</div>';
+ openModal('Saved meals',body,[{text:'Done',cls:'btn',fn:closeModal}]);
+ $$('[data-use-meal]').forEach(b=>b.onclick=()=>{const m=state.savedMeals.find(x=>x.id===b.dataset.useMeal);if(m){ensureDay().foods.push(...m.items.map(f=>({...f,id:uid(),meal:inferMeal()})));save();closeModal();renderDashboard();showToast('Saved meal added')}});
+ $$('[data-remove-meal]').forEach(b=>b.onclick=()=>{state.savedMeals=state.savedMeals.filter(x=>x.id!==b.dataset.removeMeal);save();closeModal();$('#savedMealsBtn').click()});
+};
+async function stopBarcodeCamera(){if(barcodeStream){barcodeStream.getTracks().forEach(t=>t.stop());barcodeStream=null}const v=$('#barcodeVideo');if(v)v.srcObject=null}
+$('#barcodeBtn').onclick=async()=>{
+ $('#barcodeBackdrop').classList.add('show');$('#barcodeResult').textContent='';
+ if('BarcodeDetector' in window&&navigator.mediaDevices?.getUserMedia){
+  try{barcodeStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'}},audio:false});const video=$('#barcodeVideo');video.srcObject=barcodeStream;await video.play();const detector=new BarcodeDetector({formats:['ean_13','ean_8','upc_a','upc_e','code_128']});
+   const scan=async()=>{if(!barcodeStream||!$('#barcodeBackdrop').classList.contains('show'))return;try{const codes=await detector.detect(video);if(codes.length){$('#barcodeManual').value=codes[0].rawValue;$('#barcodeResult').textContent='Barcode detected. Tap “Look up food”.';return}}catch(e){}requestAnimationFrame(scan)};requestAnimationFrame(scan);
+  }catch(e){$('#barcodeResult').textContent='Camera unavailable. Enter the barcode manually.'}
+ }else $('#barcodeResult').textContent='This browser does not support live barcode detection. Enter the barcode manually.';
+};
+async function lookupBarcode(){
+ const code=$('#barcodeManual').value.trim();if(!/^\d{8,14}$/.test(code)){showToast('Enter a valid barcode number');return}$('#barcodeResult').textContent='Looking up product…';
+ try{const res=await fetch('https://world.openfoodfacts.org/api/v2/product/'+encodeURIComponent(code)+'.json?fields=product_name,brands,nutriments,serving_size');const data=await res.json();const p=data.product;if(data.status!==1||!p)throw new Error('Product not found');const n=p.nutriments||{};const kcal=Number(n['energy-kcal_100g']??(Number(n['energy_100g'])/4.184))||0;
+  const item={id:uid(),name:(p.product_name||'Scanned product')+(p.brands?' · '+p.brands:''),emoji:'📦',kcal:Math.round(kcal),p:Number(n.proteins_100g)||0,c:Number(n.carbohydrates_100g)||0,f:Number(n.fat_100g)||0,meal:inferMeal(),quantity:100,unit:'100 g'};ensureDay().foods.push(item);save();renderDashboard();$('#barcodeResult').textContent=`Added ${item.name} using per-100 g values. Adjust the serving if needed.`;showToast('Barcode product added');
+ }catch(e){$('#barcodeResult').textContent='Could not find this barcode. Check the number or enter the food manually.'}
+}
+$('#barcodeLookup').onclick=lookupBarcode;
+$('#barcodeClose').onclick=$('#barcodeCancel').onclick=async()=>{await stopBarcodeCamera();$('#barcodeBackdrop').classList.remove('show')};
+$('#barcodeBackdrop').addEventListener('click',async e=>{if(e.target===$('#barcodeBackdrop')){await stopBarcodeCamera();$('#barcodeBackdrop').classList.remove('show')}});
+async function connectCloud(){
+ const url=$('#supabaseUrl').value.trim(),key=$('#supabaseAnonKey').value.trim();if(!url||!key){showToast('Enter your Supabase URL and anon key');return}if(!window.supabase?.createClient){showToast('Could not load Supabase SDK — internet required');return}
+ state.cloud={url,key,enabled:true};setSyncStatus('CONNECTING');save();
+ try{supabaseClient=window.supabase.createClient(url,key);let {data:{session}}=await supabaseClient.auth.getSession();if(!session){const result=await supabaseClient.auth.signInAnonymously();if(result.error)throw result.error;session=result.data.session}cloudUser=session.user;
+  const {data,error}=await supabaseClient.from('form_user_state').select('state_json').eq('user_id',cloudUser.id).maybeSingle();if(error)throw error;
+  if(data?.state_json&&confirm('Cloud data exists. Press OK to restore cloud data, or Cancel to keep this device data and upload it.')){const cloudState=data.state_json;state={...defaultState(),...cloudState,cloud:{url,key,enabled:true}};originalSave();renderDashboard();renderWorkout();renderHistory();renderProfile()}
+  const up=await supabaseClient.from('form_user_state').upsert({user_id:cloudUser.id,state_json:state,updated_at:new Date().toISOString()},{onConflict:'user_id'});if(up.error)throw up.error;setSyncStatus('CONNECTED');showToast('Cloud sync connected');
+ }catch(e){console.error(e);state.cloud.enabled=false;setSyncStatus('SETUP NEEDED');showToast('Cloud sync failed — check SQL setup and anonymous auth')}
+}
+$('#connectCloudBtn').onclick=connectCloud;
+$('#disconnectCloudBtn').onclick=async()=>{if(supabaseClient){try{await supabaseClient.auth.signOut()}catch(e){}}supabaseClient=null;cloudUser=null;state.cloud.enabled=false;save();setSyncStatus('LOCAL ONLY');showToast('Cloud sync disconnected')};
+function restoreCloudConfig(){if(state.cloud?.url)$('#supabaseUrl').value=state.cloud.url;if(state.cloud?.key)$('#supabaseAnonKey').value=state.cloud.key}
+const priorRenderProfile=renderProfile;
+renderProfile=function(){priorRenderProfile();restoreCloudConfig();setSyncStatus(state.cloud?.enabled?'READY TO SYNC':'LOCAL ONLY')};
+if('serviceWorker' in navigator&&location.protocol.startsWith('http'))window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(err=>console.warn('PWA service worker registration failed',err)));
+
+init();
+})();
+</script>
+</body>
+</html>
